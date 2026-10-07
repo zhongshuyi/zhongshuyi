@@ -1,0 +1,91 @@
+name: Update contribution snake
+
+on:
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/contribution-snake.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: contribution-snake
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    if: github.repository == 'zhongshuyi/zhongshuyi'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Generate light and dark animations
+        uses: Platane/snk/svg-only@d8f6715049803e982ee5ff501b6b9b7d5deeb09b # v3.5.0
+        with:
+          github_user_name: zhongshuyi
+          github_token: ${{ github.token }}
+          outputs: |
+            dist/github-snake.svg?palette=github-light
+            dist/github-snake-dark.svg?palette=github-dark
+
+      - name: Save generated SVG files
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: contribution-snake
+          path: dist/*.svg
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: generate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Download generated SVG files
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: contribution-snake
+          path: ${{ runner.temp }}/contribution-snake
+
+      - name: Publish animation files
+        shell: bash
+        env:
+          PROFILE_ASSET_BRANCH: codex/profile-assets
+          PROFILE_AUTHOR_NAME: zhongshuyi
+          PROFILE_AUTHOR_EMAIL: 53006829+zhongshuyi@users.noreply.github.com
+        run: |
+          set -euo pipefail
+
+          test -s "$RUNNER_TEMP/contribution-snake/github-snake.svg"
+          test -s "$RUNNER_TEMP/contribution-snake/github-snake-dark.svg"
+
+          git config user.name "$PROFILE_AUTHOR_NAME"
+          git config user.email "$PROFILE_AUTHOR_EMAIL"
+          git fetch --no-tags --depth=1 origin '+refs/heads/*:refs/remotes/origin/*'
+
+          if git show-ref --verify --quiet "refs/remotes/origin/$PROFILE_ASSET_BRANCH"; then
+            git checkout --detach "refs/remotes/origin/$PROFILE_ASSET_BRANCH"
+          else
+            git checkout --orphan "$PROFILE_ASSET_BRANCH"
+            git rm -rf -- .
+          fi
+
+          cp "$RUNNER_TEMP/contribution-snake/github-snake.svg" github-snake.svg
+          cp "$RUNNER_TEMP/contribution-snake/github-snake-dark.svg" github-snake-dark.svg
+          git add -- github-snake.svg github-snake-dark.svg
+
+          if git diff --cached --quiet; then
+            echo 'Animation files are unchanged.'
+            exit 0
+          fi
+
+          git commit -m 'chore: update contribution snake animation'
+          git push origin "HEAD:refs/heads/$PROFILE_ASSET_BRANCH"
