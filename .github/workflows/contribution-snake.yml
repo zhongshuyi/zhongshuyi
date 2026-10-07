@@ -1,4 +1,4 @@
-name: Update contribution snake
+name: Update profile visuals
 
 on:
   schedule:
@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/contribution-snake.yml'
+      - '.github/scripts/contribution-graph.mjs'
 
 permissions:
   contents: read
@@ -20,8 +21,13 @@ jobs:
   generate:
     if: github.repository == 'zhongshuyi/zhongshuyi'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
+      - name: Check out graph generator
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
       - name: Generate light and dark animations
         uses: Platane/snk/svg-only@d8f6715049803e982ee5ff501b6b9b7d5deeb09b # v3.5.0
         with:
@@ -30,6 +36,82 @@ jobs:
           outputs: |
             dist/github-snake.svg?palette=github-light
             dist/github-snake-dark.svg?palette=github-dark
+
+      - name: Generate light stats card
+        uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2.1.0
+        with:
+          card: stats
+          options: username=zhongshuyi&show_icons=true&theme=calm&disable_animations=true
+          path: dist/stats.svg
+          token: ${{ github.token }}
+          core_version: '2.2.1'
+          fail_on_error: true
+
+      - name: Generate dark stats card
+        uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2.1.0
+        with:
+          card: stats
+          options: username=zhongshuyi&show_icons=true&theme=calm&bg_color=0d1117&text_color=c9d1d9&border_color=30363d&disable_animations=true
+          path: dist/stats-dark.svg
+          token: ${{ github.token }}
+          core_version: '2.2.1'
+          fail_on_error: true
+
+      - name: Generate light languages card
+        uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2.1.0
+        with:
+          card: top-langs
+          options: username=zhongshuyi&layout=compact&langs_count=8&card_width=350&theme=calm&disable_animations=true
+          path: dist/top-langs.svg
+          token: ${{ github.token }}
+          core_version: '2.2.1'
+          fail_on_error: true
+
+      - name: Generate dark languages card
+        uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2.1.0
+        with:
+          card: top-langs
+          options: username=zhongshuyi&layout=compact&langs_count=8&card_width=350&theme=calm&bg_color=0d1117&text_color=c9d1d9&border_color=30363d&disable_animations=true
+          path: dist/top-langs-dark.svg
+          token: ${{ github.token }}
+          core_version: '2.2.1'
+          fail_on_error: true
+
+      - name: Generate light and dark activity graphs
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PROFILE_USERNAME: zhongshuyi
+        run: node .github/scripts/contribution-graph.mjs
+
+      - name: Validate generated SVG files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+
+          assets = (
+              "github-snake.svg", "github-snake-dark.svg",
+              "stats.svg", "stats-dark.svg",
+              "top-langs.svg", "top-langs-dark.svg",
+              "activity-graph.svg", "activity-graph-dark.svg",
+          )
+          for name in assets:
+              path = Path("dist") / name
+              if not path.is_file() or path.stat().st_size < 1000:
+                  raise SystemExit(f"Missing or empty SVG: {name}")
+              root = ET.parse(path).getroot()
+              if root.tag != "{http://www.w3.org/2000/svg}svg":
+                  raise SystemExit(f"Invalid SVG document: {name}")
+              content = " ".join(root.itertext()).lower()
+              if any(error in content for error in (
+                  "something went wrong", "rate limit exceeded",
+                  "bad credentials", "could not resolve to a user",
+              )):
+                  raise SystemExit(f"Error card returned: {name}")
+          print(f"Validated {len(assets)} SVG files.")
+          PY
 
       - name: Save generated SVG files
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -55,7 +137,7 @@ jobs:
           name: contribution-snake
           path: ${{ runner.temp }}/contribution-snake
 
-      - name: Publish animation files
+      - name: Publish profile visuals
         shell: bash
         env:
           PROFILE_ASSET_BRANCH: codex/profile-assets
@@ -64,8 +146,15 @@ jobs:
         run: |
           set -euo pipefail
 
-          test -s "$RUNNER_TEMP/contribution-snake/github-snake.svg"
-          test -s "$RUNNER_TEMP/contribution-snake/github-snake-dark.svg"
+          profile_assets=(
+            github-snake.svg github-snake-dark.svg
+            stats.svg stats-dark.svg
+            top-langs.svg top-langs-dark.svg
+            activity-graph.svg activity-graph-dark.svg
+          )
+          for profile_asset in "${profile_assets[@]}"; do
+            test -s "$RUNNER_TEMP/contribution-snake/$profile_asset"
+          done
 
           git config user.name "$PROFILE_AUTHOR_NAME"
           git config user.email "$PROFILE_AUTHOR_EMAIL"
@@ -78,14 +167,15 @@ jobs:
             git rm -rf -- .
           fi
 
-          cp "$RUNNER_TEMP/contribution-snake/github-snake.svg" github-snake.svg
-          cp "$RUNNER_TEMP/contribution-snake/github-snake-dark.svg" github-snake-dark.svg
-          git add -- github-snake.svg github-snake-dark.svg
+          for profile_asset in "${profile_assets[@]}"; do
+            cp "$RUNNER_TEMP/contribution-snake/$profile_asset" "$profile_asset"
+          done
+          git add -- "${profile_assets[@]}"
 
           if git diff --cached --quiet; then
-            echo 'Animation files are unchanged.'
+            echo 'Profile visuals are unchanged.'
             exit 0
           fi
 
-          git commit -m 'chore: update contribution snake animation'
+          git commit -m 'chore: update profile visuals'
           git push origin "HEAD:refs/heads/$PROFILE_ASSET_BRANCH"
