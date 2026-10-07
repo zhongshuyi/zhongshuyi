@@ -41,7 +41,7 @@ jobs:
         uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2.1.0
         with:
           card: stats
-          options: username=zhongshuyi&show_icons=true&theme=calm&disable_animations=true
+          options: username=zhongshuyi&show_icons=true&custom_title=zhongshuyi%27s%20GitHub%20Stats&locale=en&theme=calm&disable_animations=true
           path: dist/stats.svg
           token: ${{ github.token }}
           core_version: '2.2.1'
@@ -51,7 +51,7 @@ jobs:
         uses: stats-organization/github-readme-stats-action@2c498845f71017821efaad14293ebc736156ef21 # v2.1.0
         with:
           card: stats
-          options: username=zhongshuyi&show_icons=true&theme=calm&bg_color=0d1117&text_color=c9d1d9&border_color=30363d&disable_animations=true
+          options: username=zhongshuyi&show_icons=true&custom_title=zhongshuyi%27s%20GitHub%20Stats&locale=en&theme=calm&bg_color=0d1117&text_color=c9d1d9&border_color=30363d&disable_animations=true
           path: dist/stats-dark.svg
           token: ${{ github.token }}
           core_version: '2.2.1'
@@ -89,8 +89,11 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
           import xml.etree.ElementTree as ET
 
+          ET.register_namespace("", "http://www.w3.org/2000/svg")
+          ET.register_namespace("xlink", "http://www.w3.org/1999/xlink")
           assets = (
               "github-snake.svg", "github-snake-dark.svg",
               "stats.svg", "stats-dark.svg",
@@ -101,7 +104,8 @@ jobs:
               path = Path("dist") / name
               if not path.is_file() or path.stat().st_size < 1000:
                   raise SystemExit(f"Missing or empty SVG: {name}")
-              root = ET.parse(path).getroot()
+              tree = ET.parse(path)
+              root = tree.getroot()
               if root.tag != "{http://www.w3.org/2000/svg}svg":
                   raise SystemExit(f"Invalid SVG document: {name}")
               content = " ".join(root.itertext()).lower()
@@ -110,6 +114,15 @@ jobs:
                   "bad credentials", "could not resolve to a user",
               )):
                   raise SystemExit(f"Error card returned: {name}")
+              if name in ("stats.svg", "stats-dark.svg", "top-langs.svg", "top-langs-dark.svg"):
+                  # Keep the final appearance visible in static SVG renderers, too.
+                  for style in root.iter("{http://www.w3.org/2000/svg}style"):
+                      css = style.text or ""
+                      style.text = css + "\n.stagger { opacity: 1 !important; }"
+                      rank = re.search(r"@keyframes rankAnimation.*?\bto\s*\{\s*stroke-dashoffset:\s*([0-9.]+);", css, re.S)
+                      if rank:
+                          style.text += "\n.rank-circle { stroke-dashoffset: " + rank.group(1) + " !important; }"
+                  tree.write(path, encoding="utf-8", xml_declaration=False)
           print(f"Validated {len(assets)} SVG files.")
           PY
 

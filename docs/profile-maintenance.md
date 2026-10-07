@@ -1,20 +1,28 @@
-# 个人主页维护
+# Maintaining this profile
 
-- 简介、精选项目和联系方式：修改根目录的 `README.md`。
-- 头像旁的姓名、简介、所在地：属于 GitHub 账号资料，独立于此仓库。
-- 个人站已停用，主页中的项目入口直接链接 GitHub 仓库。
-- 顶部保留仓库原有动图；技术徽章使用 Shields，浏览量使用 GitHub Profile Views Counter。外部服务发生变化时可替换相应图片链接。
+- Edit the root `README.md` to update the introduction, projects, technology badges, and contact links.
+- The name, bio, and location beside the avatar are GitHub account settings, independent of this repository.
+- The personal website is retired. Project links point directly to their GitHub repositories.
+- The README keeps the original animated greeting and compact badge layout, with English sections and descriptions.
 
-## 贡献图贪吃蛇
+## Automatic visuals
 
-[Update contribution snake](https://github.com/zhongshuyi/zhongshuyi/actions/workflows/contribution-snake.yml) 每天 UTC 02:17（北京时间 10:17）生成浅色和深色两张 SVG，也可以在 Actions 页面手动运行。
+[Update profile visuals](https://github.com/zhongshuyi/zhongshuyi/actions/workflows/contribution-snake.yml) runs daily at 02:17 UTC (10:17 Asia/Shanghai), and can also be started with **Run workflow**.
 
-生成文件发布到 `codex/profile-assets` 分支，README 通过 GitHub 的原始文件地址显示动画。无需部署个人站、注册额外服务或配置个人访问令牌。生成失败时保留已有动画。
+It generates light and dark versions of:
 
-工作流将生成与发布分成两个 job：第三方生成 Action 只有读取权限，发布 job 才能写入仓库。Actions 固定到已核实的 commit SHA；发布采用普通提交与推送，不强制覆盖远端历史，也不向 `main` 写入生成文件。
+- GitHub statistics and top languages, using a pinned [GitHub Readme Stats Action](https://github.com/stats-organization/github-readme-stats-action) and core version.
+- A contribution activity graph, using the last 90 UTC dates from GitHub's official contribution calendar.
+- The contribution snake animation, using [snk](https://github.com/Platane/snk).
 
-动画提交使用仓库所有者的 GitHub noreply 邮箱，不添加 `Co-Authored-By`。
+SVG files are published to `codex/profile-assets` and displayed from GitHub's raw file URLs. No personal website, extra service account, or personal access token is required. A failed generation keeps the previously published images; invalid or error cards prevent publication.
 
-GitHub 的定时任务可能延迟；公开仓库长时间没有活动时，定时任务也可能被自动停用。遇到这种情况，在 Actions 页面重新启用工作流并点击 **Run workflow**。[GitHub 定时任务说明](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
+The generation job has read-only repository permissions. Only the separate publishing job can write, and it updates the asset branch with a normal commit and push. It does not force-push or write generated images to `main`. Commits use the repository owner's GitHub noreply identity, with no co-author trailers.
 
-组件参考：[snk](https://github.com/Platane/snk)、[Shields](https://shields.io/)、[GitHub Profile Views Counter](https://github.com/antonkomarev/github-profile-views-counter)。
+GitHub schedules may be delayed or disabled after a long period without repository activity. Re-enable the workflow and run it manually if needed. See [GitHub's schedule documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+
+## External badges
+
+Technology and social badges use [Shields](https://shields.io/). Profile views use [GitHub Profile Views Counter](https://github.com/antonkomarev/github-profile-views-counter); this counts image requests rather than unique visitors. The old counter's total has not been imported.
+
+The original greeting uses Giphy, and the small dancing GIF is stored in this repository. If an external service changes, replace its image URL. Statistics, contribution graphs, and the snake are served from this repository instead of public rendering services.
