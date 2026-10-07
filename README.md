@@ -14,19 +14,15 @@
 - 🔥 Full-stack developer passionate about web technologies.
 - ⚡ Enthusiastic about open-source projects and community collaboration.
 - ✨ Java developer based in **Shenzhen, China**.
-- 📔 Currently working on [**Diary · 此刻**](https://github.com/zhongshuyi/diary), a local-first diary for Android and Windows.
-- 🎮 Building small games and exploring real-time interaction with [**2048**](https://github.com/zhongshuyi/2048).
-- 📚 Sharing development notes and reusable local environment setups.
+- 📚 Always learning and exploring new technologies.
 - 💬 Ask me about anything — I'm happy to help.
-- 📫 Feel free to reach out with questions, ideas, or a project you'd like to discuss.
+- 📫 Feel free to reach out with questions or ideas.
 
 ## Contact Me
 
 [![Gmail](https://img.shields.io/badge/Gmail-D14836?style=flat-square&logo=gmail&logoColor=white)](mailto:zhongshuyi5214@gmail.com)
 [![Foxmail](https://img.shields.io/badge/Foxmail-003366?style=flat-square)](mailto:zhongshuyi5214@foxmail.com)
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/zhongshuyi)
-
-For project feedback or bug reports, please open an issue in the relevant repository.
 
 ## Tech Stack
 
@@ -100,50 +96,3 @@ For project feedback or bug reports, please open an issue in the relevant reposi
       <img src="https://raw.githubusercontent.com/zhongshuyi/zhongshuyi/codex/profile-assets/github-snake.svg" alt="Snake animation of my GitHub contributions" width="100%"/>
     </picture>
 </p>
-
-## Projects
-
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <h3><a href="https://github.com/zhongshuyi/diary">📔 Diary · 此刻</a></h3>
-      <p>A local-first diary with chat-style notes, rich text, media, backups, and optional self-hosted sync.</p>
-      <p><code>Flutter</code> <code>Dart</code> <code>Electron</code> <code>React</code></p>
-      <p><a href="https://github.com/zhongshuyi/diary">Source</a> · <a href="https://github.com/zhongshuyi/diary/releases">Downloads</a></p>
-    </td>
-    <td width="50%" valign="top">
-      <h3><a href="https://github.com/zhongshuyi/2048">🎮 2048</a></h3>
-      <p>The classic 2048 puzzle, with real-time two-player battles, room matching, and a desktop app.</p>
-      <p><code>JavaScript</code> <code>PixiJS</code> <code>FastAPI</code> <code>Tauri</code></p>
-      <p><a href="https://github.com/zhongshuyi/2048">Source</a></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <h3><a href="https://github.com/zhongshuyi/ling-admin">🔐 Ling-Admin</a></h3>
-      <p>A backend learning project with user, role, menu, and data permission management.</p>
-      <p><code>Java</code> <code>Spring Boot</code> <code>Sa-Token</code> <code>MyBatis-Plus</code></p>
-      <p><a href="https://github.com/zhongshuyi/ling-admin">Source</a> · <a href="https://github.com/zhongshuyi/ling-admin-ui">Frontend</a></p>
-    </td>
-    <td width="50%" valign="top">
-      <h3><a href="https://github.com/zhongshuyi/ling-admin-ui-template">🧩 Ling-Admin UI Template</a></h3>
-      <p>A lightweight frontend starter for getting straight to application and admin interface development.</p>
-      <p><code>Vue</code> <code>TypeScript</code></p>
-      <p><a href="https://github.com/zhongshuyi/ling-admin-ui-template">Source</a></p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <h3><a href="https://github.com/zhongshuyi/docker-compose-env">🐳 Docker Compose Environments</a></h3>
-      <p>Reusable service configurations for quickly starting databases and other local development dependencies.</p>
-      <p><code>Docker</code> <code>Docker Compose</code></p>
-      <p><a href="https://github.com/zhongshuyi/docker-compose-env">Source</a></p>
-    </td>
-    <td width="50%" valign="top">
-      <h3><a href="https://github.com/zhongshuyi/developer-knowledge-base">📚 Developer Knowledge Base</a></h3>
-      <p>Notes and practical examples on Java, web development, databases, and everyday development tools.</p>
-      <p><code>Java</code> <code>Web</code> <code>Databases</code> <code>Tooling</code></p>
-      <p><a href="https://github.com/zhongshuyi/developer-knowledge-base">Source</a></p>
-    </td>
-  </tr>
-</table>

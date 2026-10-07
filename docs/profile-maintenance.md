@@ -1,8 +1,9 @@
 # Maintaining this profile
 
-- Edit the root `README.md` to update the introduction, projects, technology badges, and contact links.
+- Edit the root `README.md` to update the introduction, technology badges, and contact links.
+- Keep the profile focused on personal interests and skills. Do not include current project updates or lists of individual repositories.
 - The name, bio, and location beside the avatar are GitHub account settings, independent of this repository.
-- The personal website is retired. Project links point directly to their GitHub repositories.
+- The personal website is retired; do not restore its old links.
 - The README keeps the original animated greeting and compact badge layout, with English sections and descriptions.
 
 ## Automatic visuals
