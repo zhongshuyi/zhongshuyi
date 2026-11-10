@@ -64,7 +64,7 @@
         stroke-dashoffset: 251.32741228718345;
       }
       to {
-        stroke-dashoffset: 192.4734313561812;
+        stroke-dashoffset: 193.1578742001006;
       }
     }
   
@@ -93,7 +93,7 @@
           * { animation-duration: 0s !important; animation-delay: 0s !important; }
         
 .stagger { opacity: 1 !important; }
-.rank-circle { stroke-dashoffset: 192.4734313561812 !important; }</style>
+.rank-circle { stroke-dashoffset: 193.1578742001006 !important; }</style>
 
         
         <defs>
